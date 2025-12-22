@@ -1,58 +1,50 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\OrderController; // Tambahkan ini nanti jika sudah buat Controller Order
 
 /*
 |--------------------------------------------------------------------------
-| HOME
+| REDIRECT AWAL
 |--------------------------------------------------------------------------
 */
 Route::get('/', function () {
-    return redirect('/login');
+    return auth()->check() ? redirect()->route('dashboard') : redirect()->route('login');
 });
 
 /*
 |--------------------------------------------------------------------------
-| LOGIN
+| AUTHENTICATION (GUEST)
 |--------------------------------------------------------------------------
 */
-Route::get('/login', function () {
-    return view('login');
-})->name('login');
+Route::middleware('guest')->group(function () {
+    // Login
+    Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+    Route::post('/login', [AuthController::class, 'login']);
 
-Route::post('/login', function (Request $request) {
-
-    $credentials = $request->only('email', 'password');
-
-    if (Auth::attempt($credentials)) {
-        $request->session()->regenerate();
-        return redirect('/home');
-    }
-
-    return back()->withErrors([
-        'email' => 'Email atau password salah',
-    ]);
+    // Register
+    Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
+    Route::post('/register', [AuthController::class, 'register']);
 });
 
 /*
 |--------------------------------------------------------------------------
-| LOGOUT
+| PROTECTED ROUTES (AUTH)
 |--------------------------------------------------------------------------
 */
-Route::post('/logout', function (Request $request) {
-    Auth::logout();
-    $request->session()->invalidate();
-    $request->session()->regenerateToken();
-    return redirect('/login');
-});
+// Dashboard (Halaman utama setelah login)
+Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-/*
-|--------------------------------------------------------------------------
-| HOME (HALAMAN UTAMA SETELAH LOGIN)
-|--------------------------------------------------------------------------
-*/
-Route::get('/home', function () {
-    return view('home');
-})->middleware('auth');
+Route::middleware('auth')->group(function () {
+
+
+    // Home (Jika masih ingin menggunakan file home.blade.php)
+    Route::get('/home', function () {
+        return view('home');
+    })->name('home');
+
+    // Logout
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+});

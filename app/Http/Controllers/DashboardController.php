@@ -9,7 +9,11 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        $orders = Order::latest()->get();
-        return view('dashboard', compact('orders'));
+        $orders = Order::with('customer')->latest()->get();
+        $stats = [
+            'proses' => Order::where('status', 'Di Proses')->count(),
+            'selesai' => Order::where('status', 'Selesai')->count(),
+        ];
+        return view('dashboard', compact('orders', 'stats'));
     }
 }

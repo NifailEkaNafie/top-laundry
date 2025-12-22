@@ -8,24 +8,12 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('orders', function (Blueprint $table) {
-            // UUID sebagai identifier UAP
-            $table->uuid('uuid')->nullable()->after('id');
-
-            // Relasi ke tabel customers
-            $table->foreignId('customer_id')
-                  ->nullable()
-                  ->after('uuid')
-                  ->constrained('customers')
-                  ->onDelete('cascade');
-        });
+        // Migration ini sudah tercakup di create_orders_table
+        // Tidak perlu menjalankan apapun
     }
 
     public function down(): void
     {
-        Schema::table('orders', function (Blueprint $table) {
-            $table->dropForeign(['customer_id']);
-            $table->dropColumn(['uuid', 'customer_id']);
-        });
+        // Tidak perlu menjalankan apapun
     }
 };

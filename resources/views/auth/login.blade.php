@@ -1,14 +1,20 @@
 @extends('layouts.app')
 
-@section('title', 'Register')
+@section('title', 'Login')
 
 @section('content')
 <div class="auth-container">
-    <h2 class="auth-title">🧺 Daftar Top Laundry</h2>
+    <h2 class="auth-title">🧺 Login Top Laundry</h2>
+
+    @if (session('error'))
+        <div class="alert alert-danger">
+            {{ session('error') }}
+        </div>
+    @endif
 
     @if ($errors->any())
         <div class="alert alert-danger">
-            <strong>Registrasi Gagal</strong>
+            <strong>Login Gagal</strong>
             <ul class="mb-0">
                 @foreach ($errors->all() as $error)
                     <li>{{ $error }}</li>
@@ -17,13 +23,8 @@
         </div>
     @endif
 
-    <form method="POST" action="{{ route('register') }}">
+    <form method="POST" action="{{ route('login') }}">
         @csrf
-
-        <div class="mb-3">
-            <label class="form-label">Nama Lengkap</label>
-            <input type="text" name="name" class="form-control" required value="{{ old('name') }}">
-        </div>
 
         <div class="mb-3">
             <label class="form-label">Email</label>
@@ -35,16 +36,11 @@
             <input type="password" name="password" class="form-control" required>
         </div>
 
-        <div class="mb-3">
-            <label class="form-label">Konfirmasi Password</label>
-            <input type="password" name="password_confirmation" class="form-control" required>
-        </div>
-
-        <button type="submit" class="btn btn-auth btn-lg text-white mb-3">Daftar</button>
+        <button type="submit" class="btn btn-auth btn-lg text-white mb-3">Login</button>
     </form>
 
     <p class="text-center text-muted">
-        Sudah punya akun? <a href="{{ route('login') }}">Login di sini</a>
+        Belum punya akun? <a href="{{ route('register') }}">Daftar di sini</a>
     </p>
 </div>
 @endsection
