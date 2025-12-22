@@ -2,16 +2,35 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class Order extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
-        'customer_name',
+        'uuid',
+        'customer_id',
+        'customer_name', // legacy
         'service_type',
         'weight_kg',
         'price_total',
         'status',
         'image_path',
     ];
+
+    protected static function booted()
+    {
+        static::creating(function ($order) {
+            $order->uuid = (string) Str::uuid();
+        });
+    }
+
+    // RELASI
+    public function customer()
+    {
+        return $this->belongsTo(Customer::class);
+    }
 }

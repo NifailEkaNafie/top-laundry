@@ -1,9 +1,15 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\OrderController;
+use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\OrderController;
+use App\Http\Controllers\Api\CustomerController;
 
+/*
+|--------------------------------------------------------------------------
+| AUTH (JWT)
+|--------------------------------------------------------------------------
+*/
 Route::prefix('auth')->group(function () {
     Route::post('register', [AuthController::class, 'register']);
     Route::post('login', [AuthController::class, 'login']);
@@ -14,10 +20,24 @@ Route::prefix('auth')->group(function () {
     });
 });
 
+/*
+|--------------------------------------------------------------------------
+| PROTECTED API (JWT)
+|--------------------------------------------------------------------------
+*/
 Route::middleware('auth:api')->group(function () {
-    Route::get('order', [OrderController::class, 'index']);
-    Route::get('order/{id}', [OrderController::class, 'show']);
-    Route::post('order', [OrderController::class, 'store']);
-    Route::patch('order/{id}', [OrderController::class, 'update']);
-    Route::delete('order/{id}', [OrderController::class, 'destroy']);
+
+    // CUSTOMER
+    Route::get('customers', [CustomerController::class, 'index']);
+    Route::post('customers', [CustomerController::class, 'store']);
+    Route::get('customers/{id}', [CustomerController::class, 'show']);
+    Route::put('customers/{id}', [CustomerController::class, 'update']);
+    Route::delete('customers/{id}', [CustomerController::class, 'destroy']);
+
+    // ORDER
+    Route::get('orders', [OrderController::class, 'index']);
+    Route::post('orders', [OrderController::class, 'store']);
+    Route::get('orders/{id}', [OrderController::class, 'show']);
+    Route::put('orders/{id}', [OrderController::class, 'update']);
+    Route::delete('orders/{id}', [OrderController::class, 'destroy']);
 });
