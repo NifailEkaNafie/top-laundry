@@ -6,10 +6,7 @@
     <title>@yield('title') | Top Laundry</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="{{ asset('css/auth.css') }}" rel="stylesheet">
-    <style>
-        body { background-color: #f8f9fa; }
-        .navbar-brand { font-weight: bold; color: #667eea !important; }
-    </style>
+
 </head>
 <body>
 

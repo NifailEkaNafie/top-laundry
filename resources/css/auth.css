@@ -3,32 +3,73 @@ body {
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #a7c2f0 0%, #7da2d9 100%); /* Lighter, cleaner blues */
     padding: 20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* A more modern font */
 }
 .auth-container {
     background: white;
     padding: 40px;
-    border-radius: 10px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    border-radius: 12px; /* Slightly more rounded */
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25); /* More prominent shadow */
     width: 100%;
     max-width: 400px;
+    position: relative; /* For potential future animations/elements */
+    overflow: hidden; /* Ensures content respects border-radius */
 }
 .auth-title {
     text-align: center;
     margin-bottom: 30px;
-    color: #667eea;
+    color: #4a77e5; /* A primary blue */
+    font-size: 2.2rem; /* Slightly larger title */
+    font-weight: 700;
+}
+.form-label {
+    font-weight: 500; /* Slightly bolder label */
+    color: #333;
+}
+.form-control {
+    border-color: #d1d9e6; /* Softer border color */
+    padding: 0.75rem 1rem; /* More padding */
+    border-radius: 8px; /* Consistent rounded corners */
 }
 .form-control:focus {
-    border-color: #667eea;
-    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    border-color: #4a77e5; /* Focus color */
+    box-shadow: 0 0 0 0.2rem rgba(74, 119, 229, 0.25);
+}
+.alert-danger {
+    background-color: #fee2e2; /* Light red */
+    color: #991b1b; /* Darker red text */
+    border-color: #ef4444; /* Red border */
+    border-radius: 8px;
+}
+.alert-danger strong {
+    color: #7f1d1d;
 }
 .btn-auth {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #4a77e5 0%, #667eea 100%); /* Thematic gradient */
     border: none;
     width: 100%;
+    padding: 0.75rem 1.25rem; /* More padding for button */
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.3s ease;
 }
 .btn-auth:hover {
-    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+    background: linear-gradient(135deg, #667eea 0%, #4a77e5 100%);
     color: white;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+    transform: translateY(-2px);
+}
+.text-muted {
+    color: #6b7280 !important; /* Muted gray */
+    font-size: 0.9rem;
+}
+.text-muted a {
+    color: #4a77e5; /* Link color */
+    font-weight: 600;
+    text-decoration: none;
+}
+.text-muted a:hover {
+    text-decoration: underline;
 }

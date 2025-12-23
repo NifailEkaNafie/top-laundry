@@ -27,7 +27,6 @@ class OrderController extends Controller
 
         $order = Order::create([
             'customer_id' => $request->customer_id,
-            'customer_name' => $request->customer_name,
             'service_type' => $request->service_type,
             'weight_kg' => $request->weight_kg,
             'price_total' => $request->price_total,

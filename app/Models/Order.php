@@ -13,7 +13,6 @@ class Order extends Model
     protected $fillable = [
         'uuid',
         'customer_id',
-        'customer_name', // legacy
         'service_type',
         'weight_kg',
         'price_total',

@@ -62,7 +62,14 @@
                     </div>
                     <div class="mb-3">
                         <label for="service_type" class="form-label">Jenis Layanan</label>
-                        <input type="text" class="form-control" id="service_type" name="service_type" required>
+                        <select class="form-select" id="service_type" name="service_type" required>
+                            <option value="">Pilih Jenis Layanan</option>
+                            <option value="cuci-kering">Cuci Kering</option>
+                            <option value="cuci-setrika">Cuci Setrika</option>
+                            <option value="cuci-basah">Cuci Basah</option>
+                            <option value="setrika-saja">Setrika Saja</option>
+                            <option value="dry-clean">Dry Clean</option>
+                        </select>
                         <div class="invalid-feedback"></div>
                     </div>
                     <div class="mb-3">
