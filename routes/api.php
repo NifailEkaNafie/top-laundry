@@ -11,14 +11,19 @@ use App\Http\Controllers\Api\CustomerController;
 |--------------------------------------------------------------------------
 */
 Route::prefix('auth')->group(function () {
-    Route::post('register', [AuthController::class, 'register']);
-    Route::post('login', [AuthController::class, 'login']);
+    // Tambahkan ->name('register.post')
+    Route::post('register', [AuthController::class, 'register'])->name('register.post');
+
+    // Tambahkan ->name('login.post')
+    Route::post('login', [AuthController::class, 'login'])->name('login.post');
 
     Route::middleware('auth:api')->group(function () {
-        Route::post('logout', [AuthController::class, 'logout']);
+        Route::post('logout', [AuthController::class, 'logout'])->name('logout');
         Route::get('me', [AuthController::class, 'me']);
     });
 });
+
+Route::post('/public/booking', [App\Http\Controllers\Api\PublicBookingController::class, 'store']);
 
 /*
 |--------------------------------------------------------------------------

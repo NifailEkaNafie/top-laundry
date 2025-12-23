@@ -1,50 +1,34 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\OrderController; // Tambahkan ini nanti jika sudah buat Controller Order
 
 /*
 |--------------------------------------------------------------------------
-| REDIRECT AWAL
+| Web Routes (Hanya untuk Tampilan)
 |--------------------------------------------------------------------------
+|
+| Route ini hanya bertugas me-load file blade. Logika autentikasi & data
+| ditangani oleh JavaScript yang memanggil API (routes/api.php).
+|
 */
+
+// Halaman Utama: Redirect ke login
 Route::get('/', function () {
-    return auth()->check() ? redirect()->route('dashboard') : redirect()->route('login');
+    return redirect()->route('login');
 });
 
-/*
-|--------------------------------------------------------------------------
-| AUTHENTICATION (GUEST)
-|--------------------------------------------------------------------------
-*/
-Route::middleware('guest')->group(function () {
-    // Login
-    Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
-    Route::post('/login', [AuthController::class, 'login']);
+// Halaman Login & Register (Tanpa Controller, langsung View)
+Route::view('/login', 'auth.login')->name('login');
+Route::view('/register', 'auth.register')->name('register');
 
-    // Register
-    Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
-    Route::post('/register', [AuthController::class, 'register']);
-});
+// Halaman Dashboard
+Route::view('/dashboard', 'dashboard')->name('dashboard');
 
-/*
-|--------------------------------------------------------------------------
-| PROTECTED ROUTES (AUTH)
-|--------------------------------------------------------------------------
-*/
-// Dashboard (Halaman utama setelah login)
-Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+// Tambahkan baris ini
+Route::view('/booking', 'booking')->name('booking');
 
-Route::middleware('auth')->group(function () {
-
-
-    // Home (Jika masih ingin menggunakan file home.blade.php)
-    Route::get('/home', function () {
-        return view('home');
-    })->name('home');
-
-    // Logout
-    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+// Route root bisa diarahkan ke booking jika mau, atau tetap ke login
+Route::get('/', function () {
+    // Opsional: Redirect user umum ke halaman booking, bukan login admin
+    return redirect()->route('booking');
 });
