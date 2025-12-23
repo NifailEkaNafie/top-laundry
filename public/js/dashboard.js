@@ -2,45 +2,50 @@
 if (!window.dashboardScriptLoaded) {
     window.dashboardScriptLoaded = true;
 
-    // Gunakan 'var' (bukan const) agar tidak error jika file ter-load 2x
+    // Ambil token
     var token = localStorage.getItem('token');
 
     // Konfigurasi Axios Global
+    // PENTING: Tambahkan Header Accept agar server membalas dengan JSON
+    axios.defaults.headers.common['Accept'] = 'application/json';
+
     if (token) {
         axios.defaults.headers.common['Authorization'] = 'Bearer ' + token;
     } else {
-        // Jangan redirect paksa di sini untuk menghindari loop, cukup log saja
-        console.warn('Token tidak ditemukan, fitur mungkin terbatas.');
+        console.warn('Token tidak ditemukan! Anda mungkin perlu login ulang.');
     }
 
-    // Jalankan fungsi saat halaman siap
     document.addEventListener('DOMContentLoaded', function() {
-        console.log("Dashboard JS Loaded & Ready!");
+        console.log("🚀 Dashboard JS Siap!");
         loadOrders();
         loadCustomers();
         setupPriceCalculator();
     });
 
-    // --- FUNGSI GLOBAL (window.) agar bisa dipanggil HTML ---
+    // --- FUNGSI GLOBAL ---
 
     window.loadCustomers = async function() {
-        console.log("Memulai loadCustomers..."); // Debug log
+        console.log("🔄 Mengambil data customer...");
         try {
             const response = await axios.get('/api/customers');
-            const select = document.getElementById('customer_id');
+            console.log("✅ Response Server:", response); // Cek ini di Console!
 
-            if(!select) {
-                console.error("Elemen dropdown 'customer_id' tidak ditemukan!");
+            const select = document.getElementById('customer_id');
+            if(!select) return;
+
+            // Logika Pembacaan Data yang Fleksibel
+            let customers = [];
+
+            // Cek apakah response berupa HTML (Tanda error auth)
+            if (typeof response.data === 'string' && response.data.includes('<html')) {
+                console.error("❌ Error: Server membalas dengan halaman HTML (Mungkin token expired). Login ulang!");
+                // Opsional: window.location.href = '/login';
                 return;
             }
 
-            // Normalisasi Data (Jaga-jaga format {data: []} atau [])
-            let customers = [];
             if (Array.isArray(response.data)) {
                 customers = response.data;
             } else if (response.data.data && Array.isArray(response.data.data)) {
-                customers = response.data.data;
-            } else if (response.data.success && response.data.data) { // Handle format {success:true, data:[]}
                 customers = response.data.data;
             }
 
@@ -48,21 +53,26 @@ if (!window.dashboardScriptLoaded) {
             select.innerHTML = '<option value="">Pilih Customer</option>';
 
             if (customers.length === 0) {
-                console.warn("Database customer kosong!");
+                console.warn("⚠️ Data customer kosong/tidak terbaca.");
+                // Tambahkan opsi debug
+                const option = document.createElement('option');
+                option.text = "(Database Kosong / Error)";
+                select.appendChild(option);
+            } else {
+                customers.forEach(customer => {
+                    const option = document.createElement('option');
+                    option.value = customer.id;
+                    option.textContent = `${customer.name} - ${customer.phone}`;
+                    select.appendChild(option);
+                });
+                console.log(`✅ Berhasil memuat ${customers.length} customer.`);
             }
 
-            customers.forEach(customer => {
-                const option = document.createElement('option');
-                option.value = customer.id;
-                option.textContent = `${customer.name} - ${customer.phone}`;
-                select.appendChild(option);
-            });
-            console.log("Dropdown customer berhasil diisi:", customers.length, "data.");
-
         } catch (error) {
-            console.error('Gagal load customers:', error);
+            console.error('❌ Gagal load customers:', error);
             if (error.response && error.response.status === 401) {
-                console.error("Sesi habis, redirecting...");
+                console.warn("🔒 Token Expired. Redirecting...");
+                localStorage.removeItem('token');
                 window.location.href = '/login';
             }
         }
@@ -71,7 +81,6 @@ if (!window.dashboardScriptLoaded) {
     window.loadOrders = async function() {
         try {
             const response = await axios.get('/api/orders');
-            // Normalisasi data order
             const orders = Array.isArray(response.data) ? response.data : (response.data.data ? response.data.data : []);
             const tbody = document.getElementById('orders-table-body');
 
@@ -97,7 +106,7 @@ if (!window.dashboardScriptLoaded) {
                                 </span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-center">
-                                <button onclick="deleteOrder(${order.id})" class="text-red-600 hover:text-red-900 ml-2">Hapus</button>
+                                <button onclick="deleteOrder(${order.id})" class="text-red-600 hover:text-red-900 ml-2 font-bold">Hapus</button>
                             </td>
                         `;
                         tbody.appendChild(tr);
@@ -137,10 +146,9 @@ if (!window.dashboardScriptLoaded) {
         }
     };
 
-    // Form Submit Listener (Hanya pasang jika form ada)
+    // Form Submit Listener (Update/Create)
     const orderForm = document.getElementById('orderForm');
     if(orderForm) {
-        // Hapus listener lama (kloning elemen) agar tidak double submit
         const newOrderForm = orderForm.cloneNode(true);
         orderForm.parentNode.replaceChild(newOrderForm, orderForm);
 
@@ -156,7 +164,9 @@ if (!window.dashboardScriptLoaded) {
                 loadOrders();
             } catch (error) {
                 console.error(error);
-                Swal.fire('Gagal', 'Terjadi kesalahan sistem', 'error');
+                let msg = 'Gagal menyimpan data';
+                if(error.response && error.response.data && error.response.data.message) msg = error.response.data.message;
+                Swal.fire('Gagal', msg, 'error');
             }
         });
     }
